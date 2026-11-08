@@ -1,0 +1,15 @@
+# Files Git should never upload to GitHub
+
+# Your OpenWeather API key. Anyone setting up the project makes their own from config.example.js.
+homepage/config.js
+
+# Personal files that aren't part of the website
+For the README.docx
+images/Syllabus.pdf
+
+# Temporary files Word makes while a document is open
+~$*
+
+# Files Windows and OneDrive create on their own
+Thumbs.db
+desktop.ini

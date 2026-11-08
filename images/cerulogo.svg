@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">CeruSky logo</title>
+  <desc id="desc">A round navy weather badge with a rounded C, yellow sun, and small white clouds.</desc>
+  <style>
+    :root { --badge-color: #12324A; --cloud-color: #F7FBFC; --c-color: #8BC7D8; --accent-color: #2B8FBC; --sun-color: #F6C85F; }
+    .badge { fill: var(--badge-color); }
+    .ring { fill: none; stroke: var(--accent-color); stroke-width: 12; stroke-linecap: round; }
+    .center-ring { stroke: var(--c-color); }
+    .sun-center { fill: var(--sun-color); stroke: var(--c-color); stroke-width: 2; }
+    .cloud { fill: var(--cloud-color); stroke: var(--c-color); stroke-width: 2; }
+  </style>
+  <!-- Edit these groups independently: badge, rings, and clouds. -->
+  <g id="badge">
+    <circle class="badge" cx="128" cy="128" r="88"/>
+  </g>
+  <g id="rings">
+    <path class="ring center-ring" d="M164 92A52 52 0 1 0 164 164"/>
+    <circle class="sun-center" cx="128" cy="128" r="28"/>
+  </g>
+  <g id="clouds">
+    <path class="cloud" d="M87.87 102.14A11.73 11.73 0 1 1 111.07 99.08A6.98 6.98 0 0 1 122.14 106.88A8.13 8.13 0 1 1 123.87 122.94H86.47A10.47 10.47 0 0 1 87.87 102.14z"/>
+    <path class="cloud" d="M146.87 139.14A11.73 11.73 0 1 1 170.07 136.08A6.98 6.98 0 0 1 181.14 143.88A8.13 8.13 0 1 1 182.87 159.94H145.47A10.47 10.47 0 0 1 146.87 139.14z"/>
+  </g>
+</svg>

@@ -1,0 +1,278 @@
+
+/*Left Panel, including logo and navigation*/
+
+.LeftPanel {
+    position: sticky;
+    top: 0;
+    flex-shrink: 0;
+
+    height: 100vh;
+    width: clamp(252px, 15.5vw, 296px);
+    padding: 16px 14px;
+    overflow-y: auto;
+
+    background-color: var(--sky);
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/*Logo and Span styling*/
+
+.logo {
+	width: 34px;
+	height: auto;
+	display: block;
+	transition: transform 0.2s ease;
+}
+
+.CeruContainer:hover .logo {
+	transform: scale(1.1);
+}
+
+.CeruContainer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 6px;
+    text-decoration: none;
+}
+
+.CeruContainer:focus-visible {
+    outline: 2px solid var(--navy);
+    outline-offset: 3px;
+}
+
+.span {
+    font-size: 24px;
+    font-family: var(--font-brand);
+    font-weight: 500;
+    line-height: 1;
+    color: var(--navy);
+
+    /*Balances the "y" tail so the word centers on the logo icon*/
+    margin-top: 2px;
+}
+
+/*Live weather card*/
+
+.LiveWeather {
+    flex-shrink: 0;
+    min-height: 200px;
+    padding: 20px 16px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+
+    background-color: var(--cloud);
+    border-radius: 22px;
+
+    font-size: 14px;
+
+    background-color: #F7FBFC;
+}
+
+.LiveCity {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.LiveCity .Icon {
+    color: var(--accent);
+    font-size: 16px;
+}
+
+.LiveRegion,
+.LiveDetails {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.LiveTemp {
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 1.15;
+}
+
+.LiveTemp span {
+    margin-left: 2px;
+    vertical-align: super;
+
+    font-size: 16px;
+    color: var(--muted);
+}
+
+.LiveCondition {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.LiveWind {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 6px;
+
+    font-family: var(--font-nav);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.LiveWindIcon {
+    width: 20px;
+    height: 20px;
+}
+
+.WeatherIcon {
+    width: clamp(56px, 5vw, 80px);
+    height: auto;
+    aspect-ratio: 1;
+    flex-shrink: 0;
+
+}
+
+/*Navigation box styling*/
+
+.PanelSpace {
+    flex-shrink: 0;
+    padding: 12px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    background-color: var(--navy);
+    border-radius: 22px;
+}
+
+.PanelLabel {
+    font-family: var(--font-nav);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #B5CAD6;
+}
+
+.PanelBox {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 12px;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    transition: background-color 0.5s ease, color 0.5s ease;
+
+    font-family: var(--font-nav);
+    font-size: clamp(14px, 1vw, 16px);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: left;
+    color: #C3D4DE;
+
+    border-radius: 14px;
+}
+
+.PanelBox:hover {
+    background-color: var(--accent);
+    color: var(--cloud);
+}
+
+/* Saved cities and recent searches */
+.PanelSection {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.PlaceList {
+    list-style: none;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.PlaceItem {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.PlaceItem .PanelBox {
+    min-height: 40px;
+}
+
+/* The city on the page right now */
+.PanelBox[aria-current="true"] {
+    background-color: rgba(139, 199, 216, 0.18);
+    color: var(--cloud);
+}
+
+.PlaceRemove {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    font-size: 18px;
+    line-height: 1;
+    color: #A8BDCA;
+
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.PlaceRemove:hover {
+    background-color: rgba(247, 251, 252, 0.12);
+    color: var(--cloud);
+}
+
+.PanelEmpty {
+    padding: 0 12px;
+
+    font-size: 12px;
+    line-height: 1.45;
+    color: #A8BDCA;
+}
+
+.PanelEmpty[hidden] {
+    display: none;
+}
+
+.PanelTagline {
+    margin-top: 16px;
+    padding: 0 8px 8px;
+}
+
+.PanelTagline .Icon {
+    color: var(--sun);
+    font-size: 34px;
+}
+
+.TaglineMain {
+    margin-top: 6px;
+
+    font-family: var(--font-brand);
+    font-size: 16px;
+    line-height: 1.45;
+    color: var(--cloud);
+}
+
+.TaglineSub {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #A8BDCA;
+}

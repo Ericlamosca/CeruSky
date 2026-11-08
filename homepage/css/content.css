@@ -1,0 +1,1181 @@
+/* Container for the entire page content*/
+
+.create {
+    flex: 1;
+    min-width: 0;
+}
+
+.Muted {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--muted);
+}
+
+/* -------- */
+
+/* Header, including the Search Bar, Submit, location, and units*/
+
+.Header {
+    min-height: 88px;
+    padding: 12px clamp(16px, 2vw, 28px);
+
+    border-bottom: 1px solid var(--line);
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px 24px;
+}
+
+.SearchBox {
+    position: relative;
+    flex: 0 1 310px;
+    min-width: 220px;
+
+    display: flex;
+    align-items: center;
+}
+
+.SearchIcon {
+    position: absolute;
+    left: 14px;
+
+    font-size: 16px;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.SearchBar {
+    width: 100%;
+    height: 44px;
+    padding: 0 48px 0 40px;
+
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background-color: var(--cloud);
+
+    font-family: var(--font-body);
+    font-size: 13px;
+    color: var(--navy);
+}
+
+.SearchBar:focus {
+    outline: none;
+    border: 2px solid var(--sky);
+}
+
+.SearchSubmit {
+    position: absolute;
+    right: 6px;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+    background-color: var(--sky);
+    color: var(--navy);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 17px;
+}
+
+/* Sits under the search bar so the header doesn't jump when it appears */
+.SearchMessage {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 16px;
+    right: 0;
+
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.SearchMessage[hidden] {
+    display: none;
+}
+
+.HeaderActions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.UnitToggle {
+    padding: 3px;
+    display: flex;
+    gap: 2px;
+
+    background-color: var(--tint);
+    border-radius: 10px;
+}
+
+.UnitToggle button {
+    padding: 5px 10px;
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.UnitToggle .UnitActive {
+    background-color: white;
+    color: var(--navy);
+}
+
+/* -------- */
+
+/* Page heading above the cards */
+
+.content {
+    padding: 24px clamp(16px, 2vw, 28px) 32px;
+    display: grid;
+    gap: 20px;
+}
+
+.PageHeading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px 24px;
+}
+
+h1 {
+    font-family: var(--font-brand);
+    font-size: clamp(21px, 1.2rem + 0.7vw, 30px);
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+/* The city name with its Save button beside it */
+.PageTitle {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 12px;
+}
+
+.SaveCity {
+    min-height: 32px;
+    padding: 4px 12px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background-color: var(--cloud);
+
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+
+    transition: background-color 0.3s ease;
+}
+
+.SaveCity[hidden] {
+    display: none;
+}
+
+.SaveCity:hover:not(:disabled) {
+    background-color: var(--tint);
+}
+
+/* Drawn like the CeruSky logo: a thin navy outline, white until saved, then sun yellow */
+.SaveCity .Icon {
+    font-size: 16px;
+    fill: #FFFFFF;
+    stroke: var(--navy);
+    stroke-width: 1.5;
+    transition: fill 0.3s ease;
+}
+
+.SaveCity[aria-pressed="true"] {
+    border-color: var(--sun);
+    background-color: var(--sun-tint);
+}
+
+.SaveCity[aria-pressed="true"] .Icon {
+    fill: var(--sun);
+}
+
+.SaveCity:disabled {
+    cursor: default;
+    color: var(--muted);
+}
+
+.PageDate {
+    display: grid;
+    gap: 4px;
+    justify-items: end;
+}
+
+.DateLine {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* -------- */
+
+/* Forecast, Radar, and News Cards */
+
+/* Open forecast: keep the other cards at their normal height */
+.interactive:has(.ForecastDetails:not([hidden])) {
+    align-items: start;
+}
+
+.interactive {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.Card {
+    min-width: 0;
+    padding: 20px 16px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    border: 1px solid var(--line);
+    border-radius: 22px;
+
+    background-color: var(--cloud);
+}
+
+.CardHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+h2 {
+    font-family: var(--font-brand);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+h3 {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.CardIcon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--navy);
+    border-radius: 12px;
+
+    font-size: 19px;
+    color: var(--cloud);
+}
+
+/*Sun icons stay yellow on the navy tile, like the sunrise icon in the left panel*/
+.SunTile {
+    color: var(--sun);
+}
+
+.FilledSun {
+    fill: var(--sun);
+}
+
+.SectionLabel {
+    font-family: var(--font-nav);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.CardButton {
+    margin-top: auto;
+    min-height: 46px;
+    padding: 10px 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    background-color: var(--sky);
+    border-radius: 12px;
+
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+
+    transition: background-color 0.3s ease;
+}
+
+.CardButton:hover {
+    background-color: #76B8CB;
+}
+
+.SunIcon {
+    color: var(--sun);
+}
+
+.MoonIcon {
+    color: var(--accent);
+}
+
+/* 36-Hour Forecast */
+
+.ForecastSummary {
+    padding: 12px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    background-color: var(--sun-tint);
+    border-radius: 12px;
+
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.ForecastSummary .ForecastIcon {
+    width: 26px;
+    height: 26px;
+}
+
+.HourlyRow {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+}
+
+.Hour {
+    display: grid;
+    gap: 6px;
+    justify-items: center;
+}
+
+.HourTime {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.HourNow {
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.ForecastIcon {
+    display: block;
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+}
+
+.HourTemp {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.ForecastPeriods {
+    display: grid;
+    gap: 14px;
+}
+
+.ForecastDetails {
+    display: grid;
+    gap: 12px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.ForecastDetails[hidden] {
+    display: none;
+}
+
+.TableScroll {
+    overflow-x: auto;
+}
+
+.HourlyTable {
+    width: 100%;
+    border-collapse: collapse;
+
+    font-size: 12px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.HourlyTable th,
+.HourlyTable td {
+    padding: 6px 8px 6px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.HourlyTable thead th {
+    font-weight: 600;
+    color: var(--muted);
+}
+
+.HourlyTable tbody th {
+    font-weight: 600;
+}
+
+.TableTemp {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.TableTemp .ForecastIcon {
+    width: 22px;
+    height: 22px;
+}
+
+.Period {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.Period + .Period {
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.PeriodText {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.PeriodName {
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.PeriodName span {
+    margin-left: 6px;
+
+    font-size: 12px;
+    font-weight: 400;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.PeriodStats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 4px;
+
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.PeriodStats span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.PeriodStats .Icon {
+    font-size: 14px;
+    color: var(--accent);
+}
+
+.PeriodTemp {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    font-size: 24px;
+}
+
+/* Radar */
+
+/* Keeps a map shape at any card width, without growing too tall */
+.RadarMap {
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    min-height: 220px;
+    max-height: 380px;
+    border-radius: 14px;
+}
+
+.SvgFilters {
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.PrecipitationLayer {
+    filter: url(#precipitation-boost);
+}
+
+#radar-map-view {
+    width: 100%;
+    height: 100%;
+}
+
+.RadarPlayback {
+    position: absolute;
+    z-index: 500;
+    left: 8px;
+    bottom: 8px;
+    padding: 3px 8px 3px 3px;
+
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    background-color: white;
+    border-radius: 16px;
+
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.RadarPlayback button {
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--tint);
+    border-radius: 50%;
+
+    font-size: 9px;
+    color: var(--navy);
+}
+
+.RadarPlayback button[hidden] {
+    display: none;
+}
+
+.ZoomControls {
+    position: absolute;
+    z-index: 500;
+    top: 3.5%;
+    right: 2.2%;
+
+    display: grid;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.ZoomControls button {
+    width: 30px;
+    height: 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 16px;
+}
+
+.RadarTimelineBlock {
+    display: grid;
+    gap: 8px;
+}
+
+.RadarTimeline {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.TimelineStep {
+    min-width: 0;
+    display: grid;
+    gap: 4px;
+}
+
+.TimelineBarArea {
+    height: 46px;
+    display: flex;
+    align-items: flex-end;
+
+    border-bottom: 1px solid var(--line);
+}
+
+.TimelineBar {
+    width: 100%;
+    min-height: 2px;
+    border-radius: 3px 3px 0 0;
+}
+
+.TimelineLabel {
+    min-height: 14px;
+    font-size: 11px;
+    white-space: nowrap;
+    color: var(--muted);
+}
+
+.RadarLegend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.LegendItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Same colors as RADAR_COLORS in radar.js, light on the left to heavy on the right */
+.LegendScale {
+    width: 64px;
+    height: 6px;
+    border-radius: 4px;
+}
+
+.RainScale {
+    background: linear-gradient(to right, #9BE08F, #4CC14C, #1E8C2E, #F6E33B, #F5A623, #E8501C, #C8102E, #9B1B6E);
+}
+
+.SnowScale {
+    background: linear-gradient(to right, #C4E4FA, #8CC8F5, #5AA6EA, #2F7FD6, #1858B8, #0B3A8C);
+}
+
+.HailScale {
+    width: 24px;
+    background: linear-gradient(to right, #FF7AD1, #D61FA8);
+}
+
+/* The forecast bars under the map still use these blues */
+
+.Level1 { background-color: #C9E6EF; }
+.Level2 { background-color: var(--sky); }
+.Level3 { background-color: #4FA9CB; }
+.Level4 { background-color: var(--accent); }
+.Level5 { background-color: var(--navy); }
+
+.RadarNote {
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+
+    display: flex;
+    gap: 12px;
+}
+
+/* Weather News */
+
+.NewsPhoto {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 710 / 211;
+    min-height: 130px;
+
+    background-color: var(--sky);
+    border-radius: 14px;
+}
+
+.NewsPhoto img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.NewsPhoto img[hidden],
+.CityMap[hidden] {
+    display: none;
+}
+
+/* While the photo is being found: a soft pulse instead of a flash of the state map */
+.NewsPhoto.IsLoading {
+    animation: PhotoLoading 1.2s ease-in-out infinite alternate;
+}
+
+/* The photo or state map fades in once it's ready */
+.NewsPhoto img,
+.CityMap {
+    animation: PhotoFadeIn 0.4s ease;
+}
+
+@keyframes PhotoLoading {
+    from { background-color: var(--sky); }
+    to { background-color: var(--tint); }
+}
+
+@keyframes PhotoFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .NewsPhoto.IsLoading,
+    .NewsPhoto img,
+    .CityMap {
+        animation: none;
+    }
+}
+
+.CityMap {
+    width: 100%;
+    height: 100%;
+}
+
+.CityMap svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.NewsBadge {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    padding: 4px 10px;
+
+    background-color: white;
+    border-radius: 20px;
+
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* Credit for photos whose license asks for one. Small, in the corner across from the city name. */
+.PhotoCredit {
+    position: absolute;
+    right: 8px;
+    bottom: 8px;
+    max-width: 55%;
+    padding: 2px 8px;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    background-color: rgba(18, 50, 74, 0.6);
+    border-radius: 20px;
+
+    font-size: 10px;
+    color: var(--cloud);
+}
+
+.PhotoCredit[hidden] {
+    display: none;
+}
+
+.PhotoCredit a {
+    color: inherit;
+}
+
+.NewsHeadline {
+    font-size: 18px;
+    line-height: 1.3;
+}
+
+.LocalOutlook {
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+
+    display: grid;
+    gap: 10px;
+}
+
+.NewsSource {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.NewsSource .Icon {
+    font-size: 15px;
+    color: var(--accent);
+}
+
+.NationalNews {
+    display: grid;
+    gap: 4px;
+}
+
+.NewsList {
+    list-style: none;
+}
+
+/* Featured story: the most important story, with its YouTube video or a CeruSky thumbnail */
+.FeaturedStory[hidden] {
+    display: none;
+}
+
+.FeaturedVideo,
+.FeaturedLink {
+    display: grid;
+    gap: 6px;
+    align-content: start;
+
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.FeaturedLink:hover .NewsLinkTitle {
+    color: var(--navy);
+}
+
+.FeaturedLink:focus-visible,
+.VideoThumbnail:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.FeaturedTitle {
+    font-size: 14px;
+}
+
+.FeaturedThumbnail {
+    position: relative;
+    overflow: hidden;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    margin-bottom: 4px;
+
+    border: 0;
+    border-radius: 14px;
+    background-color: var(--navy);
+    box-shadow: 0 6px 16px rgba(18, 50, 74, 0.22);
+}
+
+.VideoThumbnail {
+    padding: 0;
+    cursor: pointer;
+}
+
+/* YouTube's thumbnails have black bars, so the image fills the box and crops them off */
+.VideoThumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.VideoThumbnail:hover img {
+    transform: scale(1.04);
+}
+
+/* Soft navy fade so the play button and the page colors tie into the image */
+.VideoThumbnail::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(18, 50, 74, 0.55), rgba(18, 50, 74, 0) 55%);
+    pointer-events: none;
+}
+
+.VideoPlay {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 52px;
+    height: 52px;
+    padding-left: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: rgba(247, 251, 252, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px rgba(18, 50, 74, 0.3);
+
+    font-size: 18px;
+    color: var(--navy);
+
+    transition: transform 0.2s ease;
+}
+
+.VideoThumbnail:hover .VideoPlay {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+iframe.FeaturedThumbnail {
+    box-shadow: none;
+}
+
+/* A story without a video: the event's weather icon on CeruSky navy */
+.EventThumbnail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+
+    background: radial-gradient(circle at 70% 20%, var(--accent), var(--navy) 70%);
+}
+
+.EventThumbnail img {
+    width: 38%;
+    max-width: 120px;
+    filter: drop-shadow(0 4px 10px rgba(18, 50, 74, 0.4));
+}
+
+.EventLabel {
+    font-family: var(--font-nav);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cloud);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .VideoThumbnail img,
+    .VideoPlay {
+        transition: none;
+    }
+}
+
+.NewsLink {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+
+    display: grid;
+    gap: 2px;
+
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.NewsLinkTitle {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.NewsLink:hover .NewsLinkTitle {
+    color: var(--navy);
+}
+
+.NewsLinkMeta {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.NewsLink:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.NationalCities {
+    display: grid;
+    gap: 8px;
+}
+
+.CityWeatherGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+    gap: 8px 16px;
+}
+
+.CityWeather {
+    min-width: 0;
+
+    /* The padding gives the hover color room, and the negative margin keeps the icons lined up with the label above */
+    width: calc(100% + 16px);
+    padding: 4px 8px;
+    margin: 0 -8px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    border-radius: 10px;
+
+    font-size: 13px;
+    text-align: left;
+
+    transition: background-color 0.3s ease;
+}
+
+/* Each city is a button that loads it */
+.CityWeather:hover {
+    background-color: var(--tint);
+}
+
+.CityWeather:hover .CityWeatherName {
+    color: var(--accent);
+}
+
+.CityWeather .ForecastIcon {
+    width: 28px;
+    height: 28px;
+}
+
+.CityWeatherName {
+    flex: 1;
+    min-width: 0;
+}
+
+.CityWeatherTemp {
+    font-weight: 600;
+}
+
+.NewsItem {
+    display: flex;
+    gap: 12px;
+}
+
+.NewsItem + .NewsItem {
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+}
+
+.NewsItem .CardIcon {
+    width: 46px;
+    height: 46px;
+}
+
+.NewsTopic {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+}
+
+.NewsMeta {
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* -------- */
+
+/* Footer */
+
+.SiteFooter {
+    padding: 0 clamp(16px, 2vw, 28px) 16px;
+
+    font-size: 11px;
+    text-align: right;
+    color: var(--muted);
+}
+
+.SiteFooter a {
+    color: inherit;
+}
+
+/* -------- */
+
+/* Smaller screens */
+
+/* These follow the space the cards actually have, so they account for the left panel */
+.content {
+    container-type: inline-size;
+}
+
+/* Two cards side by side, with the national card across the full width below */
+@container (max-width: 1040px) {
+    .interactive {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .CardButton {
+        margin-top: 4px;
+    }
+
+    .WeatherCard3 {
+        grid-column: 1 / -1;
+
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px 20px;
+    }
+
+    .WeatherCard3 .CardHeader,
+    .WeatherCard3 .NationalCities,
+    .WeatherCard3:has(.FeaturedStory[hidden]) .NationalNews {
+        grid-column: 1 / -1;
+    }
+}
+
+/* One card per row */
+@container (max-width: 680px) {
+    .interactive,
+    .WeatherCard3 {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .RadarMap {
+        aspect-ratio: 4 / 3;
+    }
+}
+
+@media (max-width: 760px) {
+    body {
+        flex-direction: column;
+    }
+
+    .LeftPanel {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+
+    .PageDate {
+        justify-items: start;
+    }
+}
+
+@media (max-width: 420px) {
+    .Card {
+        padding: 16px 12px;
+    }
+
+    .SearchBox {
+        flex-basis: 100%;
+    }
+
+    .NewsBadge {
+        max-width: calc(100% - 20px);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}

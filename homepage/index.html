@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>CeruSky - Your Local Weather Forecast</title>
+	<link rel="icon" href="../images/cerusky-logo.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Jura:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/leftpanel.css">
+    <link rel="stylesheet" href="css/content.css">
+
+</head>
+<body>
+
+    <!-- Icon set: reuse any icon with <svg class="Icon"><use href="#icon-name"/></svg> -->
+    <svg class="IconSprite" aria-hidden="true">
+        <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+        <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+        <symbol id="icon-cloud-sun" viewBox="0 0 24 24"><path d="M12 2v2M4.93 4.93l1.41 1.41M20 12h2M19.07 4.93l-1.41 1.41M15.95 12.65a4 4 0 0 0-5.93-4.13M13 22H7a5 5 0 1 1 4.9-6H13a3 3 0 0 1 0 6Z"/></symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></symbol>
+        <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+        <symbol id="icon-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10M7 17 17 7"/></symbol>
+        <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+        <symbol id="icon-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol>
+        <symbol id="icon-droplet" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7Z"/></symbol>
+        <symbol id="icon-play" viewBox="0 0 24 24"><path d="M6 3l14 9-14 9V3Z"/></symbol>
+        <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+        <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+        <symbol id="icon-locate" viewBox="0 0 24 24"><path d="M2 12h3M19 12h3M12 2v3M12 19v3"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></symbol>
+        <symbol id="icon-footprints" viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0ZM20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0ZM16 17h4M4 13h4"/></symbol>
+        <symbol id="icon-star" viewBox="0 0 24 24"><path d="M11.53 2.3a.53.53 0 0 1 .94 0l2.31 4.68a2.12 2.12 0 0 0 1.6 1.16l5.16.75a.53.53 0 0 1 .3.91l-3.74 3.64a2.12 2.12 0 0 0-.61 1.88l.88 5.14a.53.53 0 0 1-.77.56l-4.62-2.43a2.12 2.12 0 0 0-1.97 0L6.4 21.01a.53.53 0 0 1-.77-.56l.88-5.14a2.12 2.12 0 0 0-.61-1.88L2.16 9.8a.53.53 0 0 1 .3-.91l5.16-.75a2.12 2.12 0 0 0 1.6-1.16Z"/></symbol>
+        <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+        <symbol id="icon-sunrise" viewBox="0 0 24 24"><path d="M8 18a4 4 0 0 1 8 0Z" fill="#F6C85F" stroke="#F6C85F" stroke-width="1.5"/><path d="M12 8v2M4.93 10.93l1.41 1.41M19.07 10.93l-1.41 1.41M2 18h2M20 18h2M2 22h20" stroke="#F6C85F" stroke-width="1.5"/></symbol>
+    </svg>
+
+    <!-- OpenWeather's precipitation tiles (the radar's backup) are very faint. This makes them stronger and turns them CeruSky blue. -->
+    <svg class="SvgFilters" aria-hidden="true">
+        <filter id="precipitation-boost" color-interpolation-filters="sRGB">
+            <feColorMatrix type="matrix" values="0 0 0 0 0.17  0 0 0 0 0.56  0 0 0 0 0.74  0 0 0 3.5 0"/>
+        </filter>
+    </svg>
+
+    <nav class="LeftPanel">
+
+        <div class="CeruBox">
+
+            <a class="CeruContainer" href="index.html" aria-label="CeruSky home">
+                <img class="logo" src="../images/cerusky-logo.svg" alt="">
+                <span class="span">CeruSky</span>
+            </a>
+
+        </div>
+
+        <div class="LiveWeather" id="liveweather">Finding your weather...</div>
+
+        <div class="PanelSpace">
+            <!-- places.js fills both lists -->
+            <div class="PanelSection">
+                <p class="PanelLabel">Saved cities</p>
+                <ul class="PlaceList" id="saved-places"></ul>
+                <p class="PanelEmpty" id="saved-empty">No saved cities yet. Tap the star next to a city's name to add one.</p>
+            </div>
+
+            <div class="PanelSection">
+                <p class="PanelLabel">Recent searches</p>
+                <ul class="PlaceList" id="recent-places"></ul>
+                <p class="PanelEmpty" id="recent-empty">Cities you search for will show up here.</p>
+            </div>
+
+            <div class="PanelTagline">
+                <svg class="Icon"><use href="#icon-sunrise"/></svg>
+                <p class="TaglineMain">A little clarity for your everyday.</p>
+                <p class="TaglineSub">See what's in your sky.</p>
+            </div>
+        </div>
+
+    </nav>
+
+    <div class="create">
+
+        <header class="Header">
+            <div class="SearchBox">
+                <svg class="SearchIcon Icon"><use href="#icon-search"/></svg>
+                <input class="SearchBar" placeholder="Enter city or zipcode" aria-label="Enter city or zipcode">
+                <button class="SearchSubmit" aria-label="Search" type="button">
+                    <svg class="Icon"><use href="#icon-arrow-right"/></svg>
+                </button>
+                <p class="SearchMessage" id="search-message" role="status" hidden></p>
+            </div>
+
+            <div class="HeaderActions">
+                <div class="UnitToggle" role="group" aria-label="Temperature unit">
+                    <button type="button" class="UnitActive" data-unit="F" aria-pressed="true">°F</button>
+                    <button type="button" data-unit="C" aria-pressed="false">°C</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+
+            <!-- forecast.js fills the heading, forecast card, city details, and city image. -->
+            <div class="PageHeading">
+                <div>
+                    <div class="PageTitle">
+                        <h1 id="page-city">Finding your location...</h1>
+                        <button type="button" class="SaveCity" id="save-city" aria-pressed="false" hidden>
+                            <svg class="Icon"><use href="#icon-star"/></svg>
+                            <span id="save-city-label">Save city</span>
+                        </button>
+                    </div>
+                    <p class="Muted" id="page-summary"></p>
+                </div>
+                <div class="PageDate">
+                    <p class="DateLine" id="page-date"></p>
+                </div>
+            </div>
+
+            <div class="interactive">
+
+                <!-- 36-Hour Forecast card -->
+                <section class="WeatherCard1 Card" aria-labelledby="forecast-title">
+                    <div class="CardHeader">
+                        <div>
+                            <h2 id="forecast-title">36-Hour Forecast</h2>
+                            <p class="Muted">A little foresight for your plans</p>
+                        </div>
+                    </div>
+
+                    <p class="ForecastSummary" id="forecast-summary">Loading forecast...</p>
+
+                    <p class="SectionLabel">The next few hours</p>
+                    <div class="HourlyRow" id="hourly-row"></div>
+
+                    <div class="ForecastPeriods" id="forecast-periods"></div>
+
+                    <div class="LocalOutlook">
+                        <div class="NewsPhoto">
+                        <div class="CityMap" id="city-map"></div>
+                        <img id="city-photo" alt="" hidden>
+                        <span class="NewsBadge" id="city-photo-name">Your city</span>
+                        <p class="PhotoCredit" id="city-photo-credit" hidden></p>
+                    </div>
+
+                    <h3 class="NewsHeadline" id="news-headline">Loading your city...</h3>
+                    <p class="Muted" id="news-text"></p>
+                    <p class="NewsSource" id="news-source"></p>
+                    </div>
+
+                    <div class="ForecastDetails" id="forecast-details" hidden>
+                        <p class="SectionLabel">Every 3 hours</p>
+                        <div class="TableScroll">
+                            <table class="HourlyTable">
+                                <thead>
+                                    <tr><th scope="col">Time</th><th scope="col">Temp</th><th scope="col">Feels</th><th scope="col">Precip</th><th scope="col">Wind</th><th scope="col">Humidity</th></tr>
+                                </thead>
+                                <tbody id="hourly-table"></tbody>
+                            </table>
+                        </div>
+
+                    <div class="NewsItem">
+                        <span class="CardIcon"><svg class="Icon"><use href="#icon-footprints"/></svg></span>
+                        <div>
+                            <p class="NewsTopic">Outdoor plans</p>
+                            <h3 id="news-outdoor-title"></h3>
+                            <p class="NewsMeta" id="news-outdoor-meta"></p>
+                        </div>
+                    </div>
+
+                    <div class="NewsItem">
+                        <span class="CardIcon SunTile"><svg class="Icon FilledSun"><use href="#icon-sun"/></svg></span>
+                        <div>
+                            <p class="NewsTopic">Sunrise and sunset</p>
+                            <h3 id="news-sun-title"></h3>
+                            <p class="NewsMeta" id="news-sun-meta"></p>
+                        </div>
+                    </div>
+                    </div>
+
+                    <button type="button" class="CardButton" id="forecast-toggle" aria-expanded="false" aria-controls="forecast-details">
+                        <span id="forecast-toggle-label">View full forecast</span>
+                        <svg class="Icon"><use href="#icon-chevron-down"/></svg>
+                    </button>
+                </section>
+
+                <!-- Radar card -->
+                <section class="WeatherCard2 Card" aria-labelledby="radar-title">
+                    <div class="CardHeader">
+                        <div>
+                            <h2 id="radar-title">Radar</h2>
+                            <p class="Muted" id="radar-place">A wider view of your area</p>
+                        </div>
+                    </div>
+
+                    <div class="RadarMap">
+                        <div id="radar-map-view"></div>
+                        <div class="RadarPlayback">
+                            <button type="button" id="radar-play" aria-label="Pause radar" hidden>❚❚</button>
+                            <span id="radar-time"></span>
+                        </div>
+                        <div class="ZoomControls">
+                            <button type="button" id="radar-zoom-in" aria-label="Zoom in"><svg class="Icon"><use href="#icon-plus"/></svg></button>
+                            <button type="button" id="radar-zoom-out" aria-label="Zoom out"><svg class="Icon"><use href="#icon-minus"/></svg></button>
+                        </div>
+                    </div>
+
+                    <div class="RadarTimelineBlock">
+                        <div class="RadarTimeline" id="radar-timeline"></div>
+                    </div>
+
+                    <!-- Matches the colors in radar.js. Each scale goes from light on the left to heavy on the right. -->
+                    <div class="RadarLegend" aria-label="Radar colors, light to heavy">
+                        <span class="LegendItem">Rain <i class="LegendScale RainScale"></i></span>
+                        <span class="LegendItem">Snow <i class="LegendScale SnowScale"></i></span>
+                        <span class="LegendItem">Hail <i class="LegendScale HailScale"></i></span>
+                    </div>
+
+                    <div class="RadarNote">
+                        <div>
+                            <h3 id="radar-note-title">Checking the next few hours</h3>
+                            <p class="Muted" id="radar-note-text"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Weather News card -->
+                <section class="WeatherCard3 Card" aria-labelledby="news-title">
+                    <div class="CardHeader">
+                        <div>
+                            <h2 id="news-title">Weather News</h2>
+                            <p class="Muted">Stories from around the nation</p>
+                        </div>
+                    </div>
+
+                    <!-- news.js fills this with the most important story and its thumbnail or video -->
+                    <div class="FeaturedStory" id="featured-story" hidden></div>
+
+                    <div class="NationalNews">
+                        <ul class="NewsList" id="national-news">
+                            <li class="Muted">Loading the latest stories...</li>
+                        </ul>
+                    </div>
+
+                    <div class="NationalCities">
+                        <p class="SectionLabel">Across the country</p>
+                        <div class="CityWeatherGrid" id="city-weather"></div>
+                    </div>
+                </section>
+
+            </div>
+
+        </main>
+
+        <footer class="SiteFooter">
+            Weather data provided by <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeather</a>. Radar from <a href="https://www.nssl.noaa.gov/projects/mrms/" target="_blank" rel="noopener noreferrer">NOAA's National Weather Service (MRMS)</a>.
+        </footer>
+
+    </div>
+
+    <script src="index.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="units.js"></script>
+    <script src="leftpanel.js"></script>
+    <script src="radar.js"></script>
+    <script src="statemaps.js"></script>
+    <script src="statemap.js"></script>
+    <script src="forecast.js"></script>
+    <script src="cities.js"></script>
+    <script src="news.js"></script>
+    <script src="places.js"></script>
+    <script src="search.js"></script>
+</body>
+</html>
