@@ -78,6 +78,161 @@
     background-color: #F7FBFC;
 }
 
+/* The weather itself, which leftpanel.js replaces. It lines up the same way the card does. */
+.LiveWeatherInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Air quality, at the bottom of the weather card (airquality.js fills it in) */
+.AirQuality {
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.AirQuality[hidden] {
+    display: none;
+}
+
+.AqiLabel {
+    font-family: var(--font-nav);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.AqiMain {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* The AQI number in a circle of its category's color */
+.AqiValue {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 3px solid var(--aqi-color, var(--sky));
+    border-radius: 50%;
+
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.AqiCategory {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+}
+
+/* The six EPA categories, each the same width, with a marker for the current reading */
+.AqiScale {
+    position: relative;
+    width: 100%;
+    height: 5px;
+    border-radius: 4px;
+    background: linear-gradient(to right,
+        #3FB950 0 16.66%, #E3B505 16.66% 33.33%, #F08A24 33.33% 50%,
+        #E5484D 50% 66.66%, #8E4EC6 66.66% 83.33%, #7E1F3B 83.33% 100%);
+}
+
+.AqiMarker {
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+
+    border: 2px solid white;
+    border-radius: 50%;
+    background-color: var(--navy);
+    box-shadow: 0 1px 3px rgba(18, 50, 74, 0.35);
+}
+
+.AqiAdvice {
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--muted);
+}
+
+.AqiSource {
+    font-size: 10px;
+    color: var(--muted);
+}
+
+.AqiSource a {
+    color: inherit;
+}
+
+/* °F / °C switch, on its own row under the weather card */
+.UnitRow {
+    margin-top: -8px; /* Sits a little closer to the weather card it belongs to */
+    padding: 0 6px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.UnitLabel {
+    font-family: var(--font-nav);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--navy);
+}
+
+.UnitToggle {
+    flex-shrink: 0;
+    padding: 3px;
+
+    display: flex;
+    gap: 2px;
+
+    background-color: var(--tint);
+    border-radius: 10px;
+}
+
+.UnitToggle button {
+    min-height: 26px;
+    padding: 4px 9px;
+    border-radius: 8px;
+
+    font-size: 12px;
+    font-weight: 600;
+    color: #3E5A6E; /* Darker than the usual gray, so the unselected unit is easy to see */
+
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.UnitToggle button:hover:not(.UnitActive) {
+    color: var(--navy);
+}
+
+.UnitToggle .UnitActive {
+    background-color: white;
+    color: var(--navy);
+    box-shadow: 0 1px 3px rgba(18, 50, 74, 0.12);
+}
+
 .LiveCity {
     display: flex;
     align-items: center;
@@ -215,10 +370,29 @@
     min-height: 40px;
 }
 
-/* The city on the page right now */
-.PanelBox[aria-current="true"] {
+/* The city or page you're on right now */
+.PanelBox[aria-current] {
     background-color: rgba(139, 199, 216, 0.18);
     color: var(--cloud);
+}
+
+/* Page buttons (site.js builds them). They're links, styled like the other panel buttons. */
+.PageNav {
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(181, 202, 214, 0.2);
+}
+
+.PageLinks {
+    list-style: none;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.PageLinks .PanelBox {
+    min-height: 40px;
+    text-decoration: none;
 }
 
 .PlaceRemove {

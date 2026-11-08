@@ -34,15 +34,11 @@ function isSamePlace(a, b) {
     return Boolean(a && b) && getPlaceKey(a) === getPlaceKey(b);
 }
 
-/* "Dallas, Texas" in the US, "Paris, France" everywhere else */
-function getPlaceLabel(place) {
-    const area = place.state ?? (place.country && place.country !== "US" ? getCountryName(place.country) : "");
-    return area ? `${place.name}, ${area}` : place.name;
-}
-
-/* leftpanel.js calls this each time the page finishes loading a city */
+/* leftpanel.js calls this each time the page finishes loading a city.
+   It's also remembered for the other pages (see site.js). */
 function setCurrentPlace(place) {
     currentPlace = toPlace(place);
+    saveViewedPlace(currentPlace);
     showPlaces();
 }
 

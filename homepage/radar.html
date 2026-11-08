@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Radar - CeruSky</title>
+	<link rel="icon" href="../images/cerusky-logo.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Jura:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/leftpanel.css">
+    <link rel="stylesheet" href="css/content.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+    <!-- The icons this page uses. The full set is in index.html. -->
+    <svg class="IconSprite" aria-hidden="true">
+        <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+        <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+        <symbol id="icon-sunrise" viewBox="0 0 24 24"><path d="M8 18a4 4 0 0 1 8 0Z" fill="#F6C85F" stroke="#F6C85F" stroke-width="1.5"/><path d="M12 8v2M4.93 10.93l1.41 1.41M19.07 10.93l-1.41 1.41M2 18h2M20 18h2M2 22h20" stroke="#F6C85F" stroke-width="1.5"/></symbol>
+    </svg>
+
+    <aside class="LeftPanel">
+        <div class="CeruBox">
+            <a class="CeruContainer" href="index.html" aria-label="CeruSky home">
+                <img class="logo" src="../images/cerusky-logo.svg" alt="">
+                <span class="span">CeruSky</span>
+            </a>
+        </div>
+
+        <div class="PanelSpace">
+            <!-- site.js fills in the buttons for each page -->
+            <nav class="PageNav" aria-label="Pages">
+                <ul class="PageLinks" id="page-links"></ul>
+            </nav>
+
+            <div class="PanelTagline">
+                <svg class="Icon"><use href="#icon-sunrise"/></svg>
+                <p class="TaglineMain">A little clarity for your everyday.</p>
+                <p class="TaglineSub">See what's in your sky.</p>
+            </div>
+        </div>
+    </aside>
+
+    <div class="create">
+        <main class="content">
+
+            <div class="PageHeading">
+                <div>
+                    <h1 id="radar-page-title">Radar</h1>
+                    <p class="Muted" id="radar-place">Finding your location...</p>
+                </div>
+            </div>
+
+            <section class="Card RadarPageCard" aria-labelledby="radar-page-title">
+                <!-- radar.js reads data-frames and data-zoom: 13 frames, 10 minutes apart, is the last 2 hours -->
+                <div class="RadarMap RadarMapLarge">
+                    <div id="radar-map-view" data-frames="13" data-zoom="7"></div>
+                    <div class="RadarPlayback">
+                        <button type="button" id="radar-play" aria-label="Pause radar" hidden>❚❚</button>
+                        <span id="radar-time"></span>
+                    </div>
+                    <div class="ZoomControls">
+                        <button type="button" id="radar-zoom-in" aria-label="Zoom in"><svg class="Icon"><use href="#icon-plus"/></svg></button>
+                        <button type="button" id="radar-zoom-out" aria-label="Zoom out"><svg class="Icon"><use href="#icon-minus"/></svg></button>
+                    </div>
+                </div>
+
+                <div class="RadarSliderRow">
+                    <label class="SectionLabel" for="radar-slider">Past 2 hours</label>
+                    <input type="range" id="radar-slider" min="0" max="0" value="0" disabled>
+                    <span class="Muted">Now</span>
+                </div>
+
+                <div class="RadarLegend" aria-label="Radar colors, light to heavy">
+                    <span class="LegendItem">Rain <i class="LegendScale RainScale"></i></span>
+                    <span class="LegendItem">Snow <i class="LegendScale SnowScale"></i></span>
+                    <span class="LegendItem">Hail <i class="LegendScale HailScale"></i></span>
+                </div>
+
+                <p class="DataSource">Radar data: <a href="https://www.nssl.noaa.gov/projects/mrms/" target="_blank" rel="noopener noreferrer">NOAA's National Weather Service (MRMS)</a>, recolored by CeruSky. Backup radar: <a href="https://mesonet.agron.iastate.edu/" target="_blank" rel="noopener noreferrer">Iowa Environmental Mesonet</a>, Iowa State University, also recolored by CeruSky. Covers the lower 48 US states.</p>
+            </section>
+
+        </main>
+
+        <footer class="SiteFooter">
+            Radar from <a href="https://www.weather.gov/" target="_blank" rel="noopener noreferrer">NOAA's National Weather Service</a>.
+            <a href="about.html">All credits</a>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="config.js"></script>
+    <script src="api.js"></script>
+    <script src="site.js"></script>
+    <script src="radar.js"></script>
+    <script src="radarpage.js"></script>
+</body>
+</html>

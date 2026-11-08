@@ -1,8 +1,12 @@
 /* National weather news for the third card.
    Google News supplies the stories as an RSS feed. Browsers can't read that feed directly,
    so rss2json converts it to JSON. Each story links out to the site that published it.
-   The most important story is featured at the top with a thumbnail. When FOX Weather has
-   a YouTube video about it, the thumbnail is that video. */
+
+   The featured spot at the top only ever shows a real picture from a news story:
+   1. The most important story that has its own photo (from FOX Weather's news feed),
+      or a matching FOX Weather YouTube video, whichever story matters more
+   2. Otherwise, FOX Weather's newest story with a photo
+   If no story has a picture, the featured spot stays hidden and the card shows just the list. */
 
 const nationalNews = document.getElementById("national-news");
 const featuredStory = document.getElementById("featured-story");
@@ -12,35 +16,39 @@ const NEWS_SEARCH = '(hurricane OR tornado OR "severe storms" OR "flood warning"
 const NEWS_FEED = `https://news.google.com/rss/search?q=${encodeURIComponent(NEWS_SEARCH)}&hl=en-US&gl=US&ceid=US:en`;
 const NEWS_URL = `${RSS_CONVERTER}${encodeURIComponent(NEWS_FEED)}`;
 const NEWS_STORY_COUNT = 8;
-const NEWS_STORAGE_KEY = "cerusky-national-news-v6";
+const NEWS_STORAGE_KEY = "cerusky-national-news-v8";
 const NEWS_CHECK_TIME = 24 * 60 * 60 * 1000; // 1 day in milliseconds
+const FEED_RETRY_TIME = 60 * 60 * 1000; // Checks again in 1 hour if a feed couldn't load
+const FEATURED_MAX_AGE = 3 * 24 * 60 * 60 * 1000; // Older stories can stay in the list, but aren't featured
 
 /* FOX Weather's public YouTube channel */
 const VIDEO_CHANNEL = "UC1FbPiXx59_ltnFVx7IxWow";
 const VIDEO_CHANNEL_NAME = "FOX Weather";
 const VIDEO_FEED = `https://www.youtube.com/feeds/videos.xml?channel_id=${VIDEO_CHANNEL}`;
 const VIDEO_URL = `${RSS_CONVERTER}${encodeURIComponent(VIDEO_FEED)}`;
-const VIDEO_RETRY_TIME = 60 * 60 * 1000; // Checks again in 1 hour if the videos couldn't load
 const VIDEO_ID = /[?&]v=([\w-]{11})/;
+
+/* FOX Weather's news feed for publishers. Every story in it comes with a photo. */
+const PHOTO_SOURCE_NAME = "FOX Weather";
+const PHOTO_FEED = "https://moxie.foxweather.com/google-publisher/latest.xml";
+const PHOTO_URL = `${RSS_CONVERTER}${encodeURIComponent(PHOTO_FEED)}`;
 
 /* A story has to mention a real weather event, and can't look like routine coverage */
 const WORTH_SEEING = /hurricane|tornado|tropical storm|flood|wildfire|blizzard|winter storm|severe storm|evacuat|state of emergency/i;
 const NOT_WORTH_SEEING = /\bstudy\b|almanac|forecast for|how to|how many|anniversary|years? (ago|later)|\b(ram|engine|truck|miles|stock|shares|movie|game|recipe)\b|is hurricane season/i;
 const LONGEST_SOURCE_NAME = 30;
 
-/* Most important first. The first type a headline matches decides its rank,
-   and the label and icon on its thumbnail when there's no video. */
+/* Most important first. The first type a headline matches decides how important it is. */
 const EVENT_TYPES = [
-    { pattern: /hurricane(?! (center|season|hunter))/i, label: "Hurricane", icon: "11d" },
-    { pattern: /tropical storm/i, label: "Tropical storm", icon: "09d" },
-    { pattern: /tornado/i, label: "Tornado", icon: "11d" },
-    { pattern: /state of emergency|evacuat/i, label: "Emergency", icon: "11d" },
-    { pattern: /blizzard|winter storm/i, label: "Winter storm", icon: "13d" },
-    { pattern: /flood/i, label: "Flooding", icon: "10d" },
-    { pattern: /wildfire/i, label: "Wildfire", icon: "50d" },
-    { pattern: /severe storm/i, label: "Severe storms", icon: "11d" },
+    { pattern: /hurricane(?! (center|season|hunter))/i },
+    { pattern: /tropical storm/i },
+    { pattern: /tornado/i },
+    { pattern: /state of emergency|evacuat/i },
+    { pattern: /blizzard|winter storm/i },
+    { pattern: /flood/i },
+    { pattern: /wildfire/i },
+    { pattern: /severe storm/i },
 ];
-const OTHER_EVENT = { label: "Weather news", icon: "04d" };
 
 /* Words that don't show two headlines are about the same story */
 const COMMON_WORDS = /^(about|after|again|amid|area|before|could|first|from|have|into|just|last|more|near|news|over|says|since|than|that|their|them|they|this|through|what|when|where|which|while|will|with|watch|video|weather|storm|storms|tropical|hurricane|tornado|tornadoes|flood|flooding|floods|wildfire|wildfires|blizzard|winter|severe|warning|forecast|becomes)$/;
@@ -50,8 +58,9 @@ const SHARED_WORDS_FOR_MATCH = 2;
 const NAMED_STORM = /(?:[Hh]urricane|[Tt]ropical [Ss]torm|[Tt]yphoon)\s+([A-Z][a-z]+)/;
 const NOT_A_NAME = /^(Center|Season|Hunters?|Watch|Warning|Forecast|Outlook|Tracker|Tracking|Update|Expected|Could|Will)$/;
 
-/* Checks for news once a day. The list only changes when a new story is worth seeing. */
-function loadNationalNews() {
+/* Checks for news once a day. The list only changes when a new story is worth seeing.
+   The three feeds load at the same time, and any one of them failing doesn't stop the others. */
+async function loadNationalNews() {
     const saved = getSavedNews();
 
     if (saved && Date.now() - saved.checkedAt < NEWS_CHECK_TIME) {
@@ -59,32 +68,59 @@ function loadNationalNews() {
         return;
     }
 
-    const videoRequest = loadVideos();
+    const [newsItems, videoResult, photoResult] = await Promise.all([loadNewsItems(), loadVideos(), loadPhotoStories()]);
 
-    fetch(NEWS_URL)
-        .then((response) => {
-            if (!response.ok) throw new Error(`News request failed: ${response.status}`);
-            return response.json();
-        })
-        .then(async (data) => {
-            if (data.status !== "ok") throw new Error("News feed returned an error");
+    /* If Google News fails: the stories saved last time, or else FOX Weather's stories */
+    const backupStories = saved?.stories?.length > 0 ? saved.stories : photoResult.stories.filter(isWorthSeeing);
+    const stories = newsItems ? addNewStories(newsItems, saved?.stories ?? []) : backupStories.slice(0, NEWS_STORY_COUNT);
+    const featured = pickFeaturedStory(stories, videoResult.videos, photoResult.stories);
 
-            const stories = addNewStories(data.items, saved?.stories ?? []);
-            const { videos, failed } = await videoRequest;
-            const featured = pickFeaturedStory(stories, videos);
+    if (stories.length === 0 && !featured) {
+        showNewsMessage("Weather news is unavailable right now.");
+        return;
+    }
 
-            saveNews(stories, featured, failed);
-            showNews(stories, featured);
-        })
-        .catch((error) => {
-            /* Older stories are better than an empty card if the check fails */
-            if (saved?.stories.length > 0) {
-                showNews(saved.stories, saved.featured);
-            } else {
-                showNewsMessage("Weather news is unavailable right now.");
-            }
-            console.error(error);
-        });
+    saveNews(stories, featured, !newsItems || videoResult.failed || photoResult.failed);
+    showNews(stories, featured);
+}
+
+/* The Google News stories, or null if they couldn't load */
+async function loadNewsItems() {
+    try {
+        const response = await fetch(NEWS_URL);
+        const data = await response.json();
+
+        if (data.status !== "ok") throw new Error("News feed returned an error");
+        return data.items;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+
+/* FOX Weather's newest stories that have a photo. The photo is in each story's "enclosure". */
+async function loadPhotoStories() {
+    try {
+        const response = await fetch(PHOTO_URL);
+        const data = await response.json();
+
+        if (data.status !== "ok") throw new Error("Photo story feed returned an error");
+
+        const stories = data.items
+            .map((item) => ({
+                title: item.title,
+                link: item.link,
+                pubDate: item.pubDate,
+                source: PHOTO_SOURCE_NAME,
+                photo: item.enclosure?.type?.startsWith("image") ? item.enclosure.link : item.thumbnail,
+            }))
+            .filter((story) => story.photo && story.link?.startsWith("https://"));
+
+        return { stories, failed: false };
+    } catch (error) {
+        console.error(error);
+        return { stories: [], failed: true };
+    }
 }
 
 /* Puts new stories at the top and keeps earlier ones below them */
@@ -99,14 +135,29 @@ function isWorthSeeing(story) {
     return WORTH_SEEING.test(story.title) && !NOT_WORTH_SEEING.test(story.title);
 }
 
-/* The most important story, along with its video if FOX Weather has one.
-   When two are just as important, one with a video wins, then the newer one. */
-function pickFeaturedStory(stories, videos) {
-    const choices = stories.map((story) => ({ story, video: matchVideo(story, videos) }));
+/* Picks what goes in the featured spot, following the order at the top of this file.
+   Returns { story, video } or { story, photo }, or null when no story has a picture. */
+function pickFeaturedStory(stories, videos, photoStories) {
+    const isRecent = (story) => Date.now() - getStoryTime(story.pubDate) < FEATURED_MAX_AGE;
 
-    return choices.sort((a, b) => getEventRank(a.story.title) - getEventRank(b.story.title)
-        || Boolean(b.video) - Boolean(a.video)
-        || getStoryTime(b.story.pubDate) - getStoryTime(a.story.pubDate))[0] ?? null;
+    /* Stories with a picture: Google News stories that have a matching video, and FOX Weather's photo stories */
+    const withPictures = [
+        ...stories.filter(isRecent).map((story) => ({ story, video: matchVideo(story, videos) })).filter((choice) => choice.video),
+        ...photoStories.filter((story) => isRecent(story) && isWorthSeeing(story)).map((story) => ({ story, photo: story.photo })),
+    ];
+
+    /* The most important one wins. When two are just as important, a video beats a photo, then the newer one wins. */
+    if (withPictures.length > 0) {
+        return withPictures.sort((a, b) => getEventRank(a.story.title) - getEventRank(b.story.title)
+            || Boolean(b.video) - Boolean(a.video)
+            || getStoryTime(b.story.pubDate) - getStoryTime(a.story.pubDate))[0];
+    }
+
+    if (photoStories.length > 0) {
+        return { story: photoStories[0], photo: photoStories[0].photo };
+    }
+
+    return null;
 }
 
 function getEventRank(title) {
@@ -114,9 +165,6 @@ function getEventRank(title) {
     return rank === -1 ? EVENT_TYPES.length : rank;
 }
 
-function getEventType(title) {
-    return EVENT_TYPES.find((type) => type.pattern.test(title)) ?? OTHER_EVENT;
-}
 
 /* FOX Weather's newest videos. "failed" means they couldn't load, so the page should check again soon. */
 async function loadVideos() {
@@ -170,9 +218,9 @@ function getKeywords(title) {
 }
 
 function showNews(stories, featured) {
-    showFeaturedStory(featured?.story, featured?.video);
+    showFeaturedStory(featured);
 
-    const otherStories = stories.filter((story) => story.title !== featured?.story.title);
+    const otherStories = stories.filter((story) => story.title !== featured?.story?.title);
 
     if (otherStories.length === 0) {
         if (featured) {
@@ -194,9 +242,9 @@ function getSavedNews() {
     }
 }
 
-/* A failed video check is saved as an older check, so the page tries again in an hour */
-function saveNews(stories, featured, videoFailed) {
-    const checkedAt = videoFailed ? Date.now() - NEWS_CHECK_TIME + VIDEO_RETRY_TIME : Date.now();
+/* A check where any feed failed is saved as an older check, so the page tries again in an hour */
+function saveNews(stories, featured, feedFailed) {
+    const checkedAt = feedFailed ? Date.now() - NEWS_CHECK_TIME + FEED_RETRY_TIME : Date.now();
 
     try {
         localStorage.setItem(NEWS_STORAGE_KEY, JSON.stringify({ checkedAt, stories, featured }));
@@ -207,33 +255,31 @@ function saveNews(stories, featured, videoFailed) {
 
 /* -------- Featured story -------- */
 
-function showFeaturedStory(story, video) {
-    featuredStory.hidden = !story;
+function showFeaturedStory(featured) {
+    featuredStory.hidden = !featured;
 
-    if (!story) {
+    if (!featured) {
         featuredStory.replaceChildren();
         return;
     }
 
-    featuredStory.replaceChildren(video ? createFeaturedVideo(video) : createFeaturedArticle(story));
+    featuredStory.replaceChildren(featured.video ? createFeaturedVideo(featured.video) : createFeaturedArticle(featured.story, featured.photo));
 }
 
-/* A story without a video gets a CeruSky thumbnail showing what kind of event it is */
-function createFeaturedArticle(story) {
-    const { headline, source } = splitHeadline(decodeEntities(story.title));
-    const event = getEventType(story.title);
+/* The story's own photo, with its headline underneath.
+   If the photo won't load, it's removed and the headline stays. */
+function createFeaturedArticle(story, photoUrl) {
+    const { headline, source } = getHeadlineAndSource(story);
 
     const link = createExternalLink("FeaturedLink", story.link, `${headline}, from ${source}, opens in a new tab`);
     const thumbnail = document.createElement("span");
-    const icon = document.createElement("img");
-    const label = document.createElement("span");
+    const photo = document.createElement("img");
 
-    thumbnail.className = "FeaturedThumbnail EventThumbnail";
-    icon.src = getWeatherIconUrl(event.icon);
-    icon.alt = "";
-    label.className = "EventLabel";
-    label.textContent = event.label;
-    thumbnail.append(icon, label);
+    thumbnail.className = "FeaturedThumbnail PhotoThumbnail";
+    photo.src = photoUrl;
+    photo.alt = "";
+    photo.addEventListener("error", () => thumbnail.remove());
+    thumbnail.append(photo);
 
     link.append(thumbnail, ...createStoryText(headline, `${source} · ${getTimeAgo(story.pubDate)}`));
     return link;
@@ -314,8 +360,15 @@ function getStoryTime(dateText) {
 /* -------- Story list -------- */
 
 /* Builds each link with textContent, because the headlines come from outside sites */
+/* FOX Weather's stories say their source separately. Google News puts it at the end of the title. */
+function getHeadlineAndSource(story) {
+    return story.source
+        ? { headline: decodeEntities(story.title), source: story.source }
+        : splitHeadline(decodeEntities(story.title));
+}
+
 function createNewsLink(story) {
-    const { headline, source } = splitHeadline(decodeEntities(story.title));
+    const { headline, source } = getHeadlineAndSource(story);
 
     const item = document.createElement("li");
     const link = document.createElement("a");

@@ -32,20 +32,13 @@
         <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
         <symbol id="icon-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
         <symbol id="icon-locate" viewBox="0 0 24 24"><path d="M2 12h3M19 12h3M12 2v3M12 19v3"/><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="3"/></symbol>
-        <symbol id="icon-footprints" viewBox="0 0 24 24"><path d="M4 16v-2.38C4 11.5 2.97 10.5 3 8c.03-2.72 1.49-6 4.5-6C9.37 2 10 3.8 10 5.5c0 3.11-2 5.66-2 8.68V16a2 2 0 1 1-4 0ZM20 20v-2.38c0-2.12 1.03-3.12 1-5.62-.03-2.72-1.49-6-4.5-6C14.63 6 14 7.8 14 9.5c0 3.11 2 5.66 2 8.68V20a2 2 0 1 0 4 0ZM16 17h4M4 13h4"/></symbol>
         <symbol id="icon-star" viewBox="0 0 24 24"><path d="M11.53 2.3a.53.53 0 0 1 .94 0l2.31 4.68a2.12 2.12 0 0 0 1.6 1.16l5.16.75a.53.53 0 0 1 .3.91l-3.74 3.64a2.12 2.12 0 0 0-.61 1.88l.88 5.14a.53.53 0 0 1-.77.56l-4.62-2.43a2.12 2.12 0 0 0-1.97 0L6.4 21.01a.53.53 0 0 1-.77-.56l.88-5.14a2.12 2.12 0 0 0-.61-1.88L2.16 9.8a.53.53 0 0 1 .3-.91l5.16-.75a2.12 2.12 0 0 0 1.6-1.16Z"/></symbol>
+        <symbol id="icon-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></symbol>
         <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
         <symbol id="icon-sunrise" viewBox="0 0 24 24"><path d="M8 18a4 4 0 0 1 8 0Z" fill="#F6C85F" stroke="#F6C85F" stroke-width="1.5"/><path d="M12 8v2M4.93 10.93l1.41 1.41M19.07 10.93l-1.41 1.41M2 18h2M20 18h2M2 22h20" stroke="#F6C85F" stroke-width="1.5"/></symbol>
     </svg>
 
-    <!-- OpenWeather's precipitation tiles (the radar's backup) are very faint. This makes them stronger and turns them CeruSky blue. -->
-    <svg class="SvgFilters" aria-hidden="true">
-        <filter id="precipitation-boost" color-interpolation-filters="sRGB">
-            <feColorMatrix type="matrix" values="0 0 0 0 0.17  0 0 0 0 0.56  0 0 0 0 0.74  0 0 0 3.5 0"/>
-        </filter>
-    </svg>
-
-    <nav class="LeftPanel">
+    <aside class="LeftPanel">
 
         <div class="CeruBox">
 
@@ -56,9 +49,37 @@
 
         </div>
 
-        <div class="LiveWeather" id="liveweather">Finding your weather...</div>
+        <div class="LiveWeather">
+            <!-- leftpanel.js replaces what's inside this box each time the weather loads -->
+            <div class="LiveWeatherInfo" id="liveweather">Finding your weather...</div>
+
+            <!-- airquality.js fills this in. Hovering shows the pollutant levels. -->
+            <div class="AirQuality" id="air-quality" hidden>
+                <p class="AqiLabel">Air quality</p>
+                <div class="AqiMain">
+                    <span class="AqiValue" id="aqi-value"></span>
+                    <p class="AqiCategory" id="aqi-category"></p>
+                </div>
+                <div class="AqiScale" aria-hidden="true"><i class="AqiMarker" id="aqi-marker"></i></div>
+                <p class="AqiAdvice" id="aqi-advice"></p>
+                <p class="AqiSource">US AQI · <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a></p>
+            </div>
+        </div>
+
+        <div class="UnitRow">
+            <span class="UnitLabel" id="unit-label">Temperature</span>
+            <div class="UnitToggle" role="group" aria-labelledby="unit-label">
+                <button type="button" class="UnitActive" data-unit="F" aria-pressed="true">°F</button>
+                <button type="button" data-unit="C" aria-pressed="false">°C</button>
+            </div>
+        </div>
 
         <div class="PanelSpace">
+            <!-- site.js fills in the buttons for each page -->
+            <nav class="PageNav" aria-label="Pages">
+                <ul class="PageLinks" id="page-links"></ul>
+            </nav>
+
             <!-- places.js fills both lists -->
             <div class="PanelSection">
                 <p class="PanelLabel">Saved cities</p>
@@ -79,11 +100,17 @@
             </div>
         </div>
 
-    </nav>
+    </aside>
 
     <div class="create">
 
         <header class="Header">
+            <!-- Phones only. On phones the header moves to the top of the page, so the logo shows here instead of in the left panel. -->
+            <a class="HeaderLogo CeruContainer" href="index.html" aria-label="CeruSky home">
+                <img class="logo" src="../images/cerusky-logo.svg" alt="">
+                <span class="span">CeruSky</span>
+            </a>
+
             <div class="SearchBox">
                 <svg class="SearchIcon Icon"><use href="#icon-search"/></svg>
                 <input class="SearchBar" placeholder="Enter city or zipcode" aria-label="Enter city or zipcode">
@@ -92,16 +119,21 @@
                 </button>
                 <p class="SearchMessage" id="search-message" role="status" hidden></p>
             </div>
-
-            <div class="HeaderActions">
-                <div class="UnitToggle" role="group" aria-label="Temperature unit">
-                    <button type="button" class="UnitActive" data-unit="F" aria-pressed="true">°F</button>
-                    <button type="button" data-unit="C" aria-pressed="false">°C</button>
-                </div>
-            </div>
         </header>
 
         <main class="content">
+
+            <!-- alerts.js shows this red banner when the National Weather Service has an alert for the city -->
+            <section class="AlertBanner" id="alert-banner" aria-label="Weather alerts" hidden>
+                <p class="AlertLabel">
+                    <svg class="Icon"><use href="#icon-alert"/></svg>
+                    <span id="alert-count">Weather alert</span>
+                </p>
+                <div class="AlertTrack">
+                    <p class="AlertText" id="alert-text" aria-live="polite"></p>
+                </div>
+                <p class="AlertSource">Source: <a href="https://www.weather.gov/" target="_blank" rel="noopener noreferrer">National Weather Service</a></p>
+            </section>
 
             <!-- forecast.js fills the heading, forecast card, city details, and city image. -->
             <div class="PageHeading">
@@ -163,16 +195,6 @@
                         </div>
 
                     <div class="NewsItem">
-                        <span class="CardIcon"><svg class="Icon"><use href="#icon-footprints"/></svg></span>
-                        <div>
-                            <p class="NewsTopic">Outdoor plans</p>
-                            <h3 id="news-outdoor-title"></h3>
-                            <p class="NewsMeta" id="news-outdoor-meta"></p>
-                        </div>
-                    </div>
-
-                    <div class="NewsItem">
-                        <span class="CardIcon SunTile"><svg class="Icon FilledSun"><use href="#icon-sun"/></svg></span>
                         <div>
                             <p class="NewsTopic">Sunrise and sunset</p>
                             <h3 id="news-sun-title"></h3>
@@ -187,13 +209,17 @@
                     </button>
                 </section>
 
-                <!-- Radar card -->
+                <!-- Local Radar card. The full-size radar is on radar.html. -->
                 <section class="WeatherCard2 Card" aria-labelledby="radar-title">
                     <div class="CardHeader">
                         <div>
-                            <h2 id="radar-title">Radar</h2>
+                            <h2 id="radar-title">Local Radar</h2>
                             <p class="Muted" id="radar-place">A wider view of your area</p>
                         </div>
+                        <a class="CardLink" href="radar.html">
+                            Full radar
+                            <svg class="Icon"><use href="#icon-arrow-right"/></svg>
+                        </a>
                     </div>
 
                     <div class="RadarMap">
@@ -208,15 +234,17 @@
                         </div>
                     </div>
 
-                    <div class="RadarTimelineBlock">
-                        <div class="RadarTimeline" id="radar-timeline"></div>
-                    </div>
-
-                    <!-- Matches the colors in radar.js. Each scale goes from light on the left to heavy on the right. -->
+                    <!-- The key for the radar map, right under it. Matches the colors in radar.js, light on the left to heavy on the right. -->
                     <div class="RadarLegend" aria-label="Radar colors, light to heavy">
                         <span class="LegendItem">Rain <i class="LegendScale RainScale"></i></span>
                         <span class="LegendItem">Snow <i class="LegendScale SnowScale"></i></span>
                         <span class="LegendItem">Hail <i class="LegendScale HailScale"></i></span>
+                    </div>
+
+                    <!-- Not radar: the forecast's chance of precipitation for the next 36 hours, from forecast.js -->
+                    <div class="RadarTimelineBlock">
+                        <p class="SectionLabel">Next 36 hours · chance of precipitation</p>
+                        <div class="RadarTimeline" id="radar-timeline"></div>
                     </div>
 
                     <div class="RadarNote">
@@ -256,7 +284,9 @@
         </main>
 
         <footer class="SiteFooter">
-            Weather data provided by <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeather</a>. Radar from <a href="https://www.nssl.noaa.gov/projects/mrms/" target="_blank" rel="noopener noreferrer">NOAA's National Weather Service (MRMS)</a>.
+            Weather data provided by <a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeather</a> and <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>.
+            Radar and alerts from <a href="https://www.weather.gov/" target="_blank" rel="noopener noreferrer">NOAA's National Weather Service</a>.
+            <a href="about.html">All credits</a>
         </footer>
 
     </div>
@@ -265,9 +295,12 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="config.js"></script>
     <script src="api.js"></script>
+    <script src="site.js"></script>
     <script src="units.js"></script>
     <script src="leftpanel.js"></script>
     <script src="radar.js"></script>
+    <script src="alerts.js"></script>
+    <script src="airquality.js"></script>
     <script src="statemaps.js"></script>
     <script src="statemap.js"></script>
     <script src="forecast.js"></script>

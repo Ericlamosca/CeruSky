@@ -42,7 +42,35 @@ async function getPlaceForZip(zipCode) {
     }
 }
 
-/* Map tiles for the radar's backup layer */
-function getPrecipitationTileUrl() {
-    return `https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`;
+/* -------- Free services that need no key -------- */
+
+const OPEN_METEO_FORECAST_API = "https://api.open-meteo.com/v1/forecast";
+const OPEN_METEO_AIR_API = "https://air-quality-api.open-meteo.com/v1/air-quality";
+const NWS_API = "https://api.weather.gov";
+
+/* 7 days of highs, lows, and conditions from Open-Meteo, in the city's own time zone.
+   OpenWeather's free plan only goes 5 days. */
+function getSevenDayForecast(latitude, longitude) {
+    const fields = "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset";
+    return requestJson(`${OPEN_METEO_FORECAST_API}?latitude=${latitude}&longitude=${longitude}&daily=${fields}`
+        + "&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=auto&forecast_days=7", "7-day forecast");
+}
+
+/* Current temperatures (°F) for several points in one request. The backup radar uses these to tell
+   snow from rain. Returns one result per point, each with its latitude, longitude, and current temperature. */
+async function getTemperatures(latitudes, longitudes) {
+    const data = await requestJson(`${OPEN_METEO_FORECAST_API}?latitude=${latitudes.join(",")}&longitude=${longitudes.join(",")}`
+        + "&current=temperature_2m&temperature_unit=fahrenheit", "Temperatures");
+    return Array.isArray(data) ? data : [data];
+}
+
+/* Current air quality on the US AQI scale (0 to 500), plus the main pollutants */
+function getAirQuality(latitude, longitude) {
+    return requestJson(`${OPEN_METEO_AIR_API}?latitude=${latitude}&longitude=${longitude}&current=us_aqi,pm2_5,pm10,ozone&timezone=auto`, "Air quality");
+}
+
+/* Active National Weather Service alerts for a point, like warnings and watches. US only. */
+async function getWeatherAlerts(latitude, longitude) {
+    const data = await requestJson(`${NWS_API}/alerts/active?point=${latitude.toFixed(4)},${longitude.toFixed(4)}`, "Weather alerts");
+    return data.features.map((feature) => feature.properties);
 }

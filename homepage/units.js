@@ -30,20 +30,10 @@ function showActiveUnit() {
     });
 }
 
-/* Redraws from the data already loaded, so switching doesn't use another API call */
+/* Tells the page the unit changed. Each page listens for "unitchange" and redraws
+   from the data it already has, so switching doesn't use another API call. */
 function redrawTemperatures() {
-    if (pageCities.length > 0) {
-        showCityWeather();
-    }
-
-    if (!pageWeather) return;
-
-    showLiveWeather(pageWeather.weatherData, pageWeather.place);
-    updateHeading(pageWeather.weatherData, pageWeather.place);
-
-    if (pageForecast) {
-        showForecast(pageForecast, pageWeather.weatherData);
-    }
+    document.dispatchEvent(new Event("unitchange"));
 }
 
 function getSavedUnit() {

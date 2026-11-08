@@ -98,34 +98,6 @@
     display: none;
 }
 
-.HeaderActions {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.UnitToggle {
-    padding: 3px;
-    display: flex;
-    gap: 2px;
-
-    background-color: var(--tint);
-    border-radius: 10px;
-}
-
-.UnitToggle button {
-    padding: 5px 10px;
-    border-radius: 8px;
-
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-}
-
-.UnitToggle .UnitActive {
-    background-color: white;
-    color: var(--navy);
-}
 
 /* -------- */
 
@@ -267,31 +239,6 @@ h3 {
     font-size: 14px;
     font-weight: 600;
     line-height: 1.4;
-}
-
-.CardIcon {
-    flex-shrink: 0;
-    width: 40px;
-    height: 40px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    background-color: var(--navy);
-    border-radius: 12px;
-
-    font-size: 19px;
-    color: var(--cloud);
-}
-
-/*Sun icons stay yellow on the navy tile, like the sunrise icon in the left panel*/
-.SunTile {
-    color: var(--sun);
-}
-
-.FilledSun {
-    fill: var(--sun);
 }
 
 .SectionLabel {
@@ -522,24 +469,28 @@ h3 {
     border-radius: 14px;
 }
 
-.SvgFilters {
-    position: absolute;
-    width: 0;
-    height: 0;
-}
-
-.PrecipitationLayer {
-    filter: url(#precipitation-boost);
-}
-
 #radar-map-view {
     width: 100%;
     height: 100%;
 }
 
+/* The map's credits (required by Esri, OpenStreetMap, and the radar sources).
+   Smaller text, kept to the right of the play button so they never cover it. */
+.RadarMap .leaflet-control-attribution {
+    max-width: calc(100% - 130px);
+    padding: 2px 6px;
+
+    border-top-left-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.85);
+
+    font-size: 9px;
+    line-height: 1.35;
+    text-align: right;
+}
+
 .RadarPlayback {
     position: absolute;
-    z-index: 500;
+    z-index: 1000; /* Above the map's credits */
     left: 8px;
     bottom: 8px;
     padding: 3px 8px 3px 3px;
@@ -597,7 +548,11 @@ h3 {
     font-size: 16px;
 }
 
+/* The forecast bars under the radar key, set apart with a line so they don't read as part of the radar */
 .RadarTimelineBlock {
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+
     display: grid;
     gap: 8px;
 }
@@ -651,6 +606,12 @@ h3 {
     gap: 6px;
 }
 
+/* "Backup radar: can't tell rain from snow", next to the backup's key */
+.LegendNote {
+    font-size: 11px;
+    font-style: italic;
+}
+
 /* Same colors as RADAR_COLORS in radar.js, light on the left to heavy on the right */
 .LegendScale {
     width: 64px;
@@ -671,6 +632,13 @@ h3 {
     background: linear-gradient(to right, #FF7AD1, #D61FA8);
 }
 
+/* Shown instead of the three keys when the backup radar is on.
+   These are the National Weather Service's standard radar colors, which the backup uses. */
+.BackupScale {
+    width: 96px;
+    background: linear-gradient(to right, #04E9E7, #019FF4, #02FD02, #008E00, #FDF802, #FD9500, #FD0000, #F800FD);
+}
+
 /* The forecast bars under the map still use these blues */
 
 .Level1 { background-color: #C9E6EF; }
@@ -687,11 +655,144 @@ h3 {
     gap: 12px;
 }
 
+/* "Full radar" link in the Local Radar card's header */
+.CardLink {
+    margin-left: auto;
+    padding: 6px 12px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+
+    border: 1px solid var(--line);
+    border-radius: 30px;
+    background-color: white;
+
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    text-decoration: none;
+
+    transition: background-color 0.3s ease;
+}
+
+.CardLink:hover {
+    background-color: var(--tint);
+}
+
+.CardLink .Icon {
+    color: var(--accent);
+}
+
+/* Small "where this data comes from" line, used on the Radar and 7-Day Forecast pages */
+.DataSource {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.DataSource a {
+    color: inherit;
+}
+
+/* -------- Weather alert banner, top of the homepage -------- */
+
+.AlertBanner {
+    overflow: hidden;
+
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+
+    border-radius: 14px;
+    background-color: #C62828;
+    color: white;
+    box-shadow: 0 6px 18px rgba(198, 40, 40, 0.25);
+}
+
+.AlertBanner[hidden] {
+    display: none;
+}
+
+.AlertLabel {
+    height: 100%;
+    padding: 10px 14px;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    background-color: #9E1B1B;
+
+    font-family: var(--font-nav);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.AlertLabel .Icon {
+    font-size: 18px;
+}
+
+/* The text starts just past the right edge and glides left until it's gone, then repeats */
+.AlertTrack {
+    overflow: hidden;
+    padding: 10px 0;
+}
+
+.AlertText {
+    display: inline-block;
+    padding-left: 100%;
+
+    font-size: 14px;
+    font-weight: 600;
+    white-space: pre; /* Keeps the extra spaces between alerts */
+
+    animation: AlertGlide var(--glide-time, 20s) linear infinite;
+}
+
+/* Hovering stops the text so it's easy to read */
+.AlertBanner:hover .AlertText {
+    animation-play-state: paused;
+}
+
+@keyframes AlertGlide {
+    from { transform: translateX(0); }
+    to { transform: translateX(-100%); }
+}
+
+.AlertSource {
+    padding: 0 14px;
+
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0.85;
+}
+
+.AlertSource a {
+    color: inherit;
+}
+
+/* People who ask their device to reduce motion get the text standing still, wrapped onto lines */
+@media (prefers-reduced-motion: reduce) {
+    .AlertText {
+        padding-left: 14px;
+        padding-right: 14px;
+        white-space: normal;
+        animation: none;
+    }
+}
+
 /* Weather News */
 
 .NewsPhoto {
     position: relative;
     overflow: hidden;
+
+    /* The width has to be set, or the minimum height makes the box grow wider than its card */
+    width: 100%;
     aspect-ratio: 710 / 211;
     min-height: 130px;
 
@@ -878,6 +979,19 @@ h3 {
     cursor: pointer;
 }
 
+/* A story's own photo fills the box, and zooms in a little on hover like the video thumbnail */
+.PhotoThumbnail img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.FeaturedLink:hover .PhotoThumbnail img {
+    transform: scale(1.04);
+}
+
 /* YouTube's thumbnails have black bars, so the image fills the box and crops them off */
 .VideoThumbnail img {
     display: block;
@@ -932,34 +1046,9 @@ iframe.FeaturedThumbnail {
     box-shadow: none;
 }
 
-/* A story without a video: the event's weather icon on CeruSky navy */
-.EventThumbnail {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-
-    background: radial-gradient(circle at 70% 20%, var(--accent), var(--navy) 70%);
-}
-
-.EventThumbnail img {
-    width: 38%;
-    max-width: 120px;
-    filter: drop-shadow(0 4px 10px rgba(18, 50, 74, 0.4));
-}
-
-.EventLabel {
-    font-family: var(--font-nav);
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--cloud);
-}
-
 @media (prefers-reduced-motion: reduce) {
     .VideoThumbnail img,
+    .PhotoThumbnail img,
     .VideoPlay {
         transition: none;
     }
@@ -1066,11 +1155,6 @@ iframe.FeaturedThumbnail {
     border-top: 1px solid var(--line);
 }
 
-.NewsItem .CardIcon {
-    width: 46px;
-    height: 46px;
-}
-
 .NewsTopic {
     font-size: 11px;
     font-weight: 600;
@@ -1147,15 +1231,87 @@ iframe.FeaturedThumbnail {
     }
 }
 
+/* The phone-only logo in the header stays hidden on bigger screens */
+.HeaderLogo {
+    display: none;
+}
+
+/* Phones: one column. The order from top to bottom is
+   1. logo and search bar, 2. the left panel (weather, saved cities), 3. forecast, radar, and news. */
 @media (max-width: 760px) {
     body {
         flex-direction: column;
     }
 
+    /* Lets the header, cards, and footer be placed in their own order, outside their wrapper */
+    .create {
+        display: contents;
+    }
+
+    .Header {
+        order: 1;
+        min-height: 0;
+    }
+
     .LeftPanel {
+        order: 2;
         position: static;
         width: 100%;
         height: auto;
+        gap: 14px;
+    }
+
+    .content {
+        order: 3;
+    }
+
+    .SiteFooter {
+        order: 4;
+    }
+
+    /* The logo moves from the panel to the header */
+    .HeaderLogo {
+        display: inline-flex;
+    }
+
+    /* Only on pages with a header logo. The other pages keep the logo in the panel. */
+    body:has(.HeaderLogo) .LeftPanel .CeruBox {
+        display: none;
+    }
+
+    /* Saves space at the top of a small screen */
+    .PanelTagline {
+        display: none;
+    }
+
+    /* Hides Saved cities and Recent searches until there's at least one city in them */
+    .PanelSection:not(:has(.PlaceItem)) {
+        display: none;
+    }
+
+    /* The page buttons sit in a row and wrap, instead of one per line */
+    .PageNav {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+    .PageLinks {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .PageLinks .PanelBox {
+        width: auto;
+        min-height: 38px;
+        padding: 6px 12px;
+    }
+
+    .AlertBanner {
+        grid-template-columns: 1fr;
+    }
+
+    .AlertSource {
+        display: none;
     }
 
     .PageDate {

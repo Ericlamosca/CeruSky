@@ -19,8 +19,6 @@ const cityMap = document.getElementById("city-map");
 const newsHeadline = document.getElementById("news-headline");
 const newsText = document.getElementById("news-text");
 const newsSource = document.getElementById("news-source");
-const newsOutdoorTitle = document.getElementById("news-outdoor-title");
-const newsOutdoorMeta = document.getElementById("news-outdoor-meta");
 const newsSunTitle = document.getElementById("news-sun-title");
 const newsSunMeta = document.getElementById("news-sun-meta");
 const cityPhotoName = document.getElementById("city-photo-name");
@@ -32,7 +30,6 @@ const DAYTIME_END_HOUR = 18;
 const ENTRIES_IN_36_HOURS = 12; // OpenWeather sends one entry every 3 hours
 const RAIN_CHANCE_TO_MENTION = 0.3;
 const ENTRIES_IN_24_HOURS = 8;
-const COMFORTABLE_TEMPERATURE = 70;
 const MILLIMETERS_PER_INCH = 25.4;
 const LABEL_EVERY_NTH_STEP = 3;
 const PRECIPITATION_LEVELS = [0.5, 2, 5, 10]; // mm in 3 hours, the top of levels 1 to 4
@@ -144,28 +141,7 @@ function showCityDetails(forecastData, entries, currentWeather) {
     newsSource.textContent = population > 0 ? `Home to about ${population.toLocaleString("en-US")} people` : "";
     newsSource.hidden = !population;
 
-    showBestOutdoorTime(entries, city, forecastData.city.timezone);
     showDaylight(currentWeather);
-}
-
-/* Picks the daytime hour with the lowest rain chance, then the most comfortable temperature */
-function showBestOutdoorTime(entries, city, timezone) {
-    const daytimeEntries = entries.filter((entry) => isDaytime(getLocalDate(entry.dt, timezone).getUTCHours()));
-
-    if (daytimeEntries.length === 0) {
-        newsOutdoorTitle.textContent = `No daylight hours ahead in ${city}`;
-        newsOutdoorMeta.textContent = "";
-        return;
-    }
-
-    const best = [...daytimeEntries].sort((a, b) => a.pop - b.pop
-        || Math.abs(a.main.temp - COMFORTABLE_TEMPERATURE) - Math.abs(b.main.temp - COMFORTABLE_TEMPERATURE))[0];
-
-    const date = getLocalDate(best.dt, timezone);
-    const dayName = date.toLocaleDateString("en-US", { weekday: "long", timeZone: "UTC" });
-
-    newsOutdoorTitle.textContent = `${dayName} around ${formatHour(date)} looks best in ${city}`;
-    newsOutdoorMeta.textContent = `${formatTemperature(best.main.temp)} · ${Math.round(best.pop * 100)}% chance of precipitation`;
 }
 
 function showDaylight(currentWeather) {

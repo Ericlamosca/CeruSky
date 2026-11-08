@@ -5,14 +5,21 @@ const liveweather = document.getElementById("liveweather");
 /* Kept so the page can redraw when the °F / °C switch changes */
 let pageWeather = null;
 
+/* Opens on the city you were viewing earlier in this visit, like after coming back from the Radar page.
+   Otherwise it asks for your device's location. */
 onload = function () {
+    const viewed = getViewedPlace();
+
+    if (viewed) {
+        loadLocation(viewed.lat, viewed.lon, viewed).catch((error) => {
+            liveweather.innerHTML = "Weather unavailable";
+            console.error(error);
+        });
+        return;
+    }
+
     navigator.geolocation.getCurrentPosition(onLocationFound, onLocationError);
 };
-
-/* Each OpenWeather icon code, like 10n, has a matching file in images/weather */
-function getWeatherIconUrl(iconCode) {
-    return `../images/weather/${iconCode}.svg`;
-}
 
 /* OpenWeather has no wind condition, so windy is based on wind speed. Rain, snow, storms and mist keep their own icons. */
 const WINDY_SPEED_MPH = 20;
@@ -35,10 +42,6 @@ function getWeatherDisplay(weather, windSpeed) {
 function getWindDirection(degrees) {
     const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
     return directions[Math.round(degrees / 45) % 8] ?? "";
-}
-
-function getCountryName(countryCode) {
-    return new Intl.DisplayNames(["en"], { type: "region" }).of(countryCode);
 }
 
 function onLocationFound(position) {
@@ -82,6 +85,8 @@ async function loadLocation(latitude, longitude, searchedPlace = null) {
     showLiveWeather(weatherData, place);
     loadForecast(latitude, longitude, weatherData, place);
     showRadar(latitude, longitude, weatherData.name);
+    showWeatherAlerts(latitude, longitude);
+    showAirQuality(latitude, longitude);
 }
 
 function isCurrentLocation(requestId) {
@@ -105,6 +110,22 @@ function showLiveWeather(weatherData, place) {
         <p class="LiveWind"><img class="LiveWindIcon" src="../images/weather/wind-small.svg" alt="">${getWindDirection(deg)} ${Math.round(speed)} mph</p>
     `;
 }
+
+/* The °F / °C switch announces a change. This redraws the homepage from the data it already has. */
+document.addEventListener("unitchange", () => {
+    if (pageCities.length > 0) {
+        showCityWeather();
+    }
+
+    if (!pageWeather) return;
+
+    showLiveWeather(pageWeather.weatherData, pageWeather.place);
+    updateHeading(pageWeather.weatherData, pageWeather.place);
+
+    if (pageForecast) {
+        showForecast(pageForecast, pageWeather.weatherData);
+    }
+});
 
 function onLocationError() {
     liveweather.innerHTML = "Location unavailable";

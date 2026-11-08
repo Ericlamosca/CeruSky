@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>About & Credits - CeruSky</title>
+	<link rel="icon" href="../images/cerusky-logo.svg" type="image/svg+xml">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Jura:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/leftpanel.css">
+    <link rel="stylesheet" href="css/content.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+    <svg class="IconSprite" aria-hidden="true">
+        <symbol id="icon-sunrise" viewBox="0 0 24 24"><path d="M8 18a4 4 0 0 1 8 0Z" fill="#F6C85F" stroke="#F6C85F" stroke-width="1.5"/><path d="M12 8v2M4.93 10.93l1.41 1.41M19.07 10.93l-1.41 1.41M2 18h2M20 18h2M2 22h20" stroke="#F6C85F" stroke-width="1.5"/></symbol>
+    </svg>
+
+    <aside class="LeftPanel">
+        <div class="CeruBox">
+            <a class="CeruContainer" href="index.html" aria-label="CeruSky home">
+                <img class="logo" src="../images/cerusky-logo.svg" alt="">
+                <span class="span">CeruSky</span>
+            </a>
+        </div>
+
+        <div class="PanelSpace">
+            <!-- site.js fills in the buttons for each page -->
+            <nav class="PageNav" aria-label="Pages">
+                <ul class="PageLinks" id="page-links"></ul>
+            </nav>
+
+            <div class="PanelTagline">
+                <svg class="Icon"><use href="#icon-sunrise"/></svg>
+                <p class="TaglineMain">A little clarity for your everyday.</p>
+                <p class="TaglineSub">See what's in your sky.</p>
+            </div>
+        </div>
+    </aside>
+
+    <div class="create">
+        <main class="content AboutContent">
+
+            <div class="PageHeading">
+                <div>
+                    <h1>About & Credits</h1>
+                    <p class="Muted">What CeruSky is, how it was built, and where its data comes from</p>
+                </div>
+            </div>
+
+            <section class="Card AboutCard" aria-labelledby="about-title">
+                <h2 id="about-title">About CeruSky</h2>
+                <p>CeruSky is a weather website that shows your local weather, a 36-hour and 7-day forecast, live radar that tells rain from snow and hail, air quality, weather alerts, and national weather news, all in one place.</p>
+                <p>I built the foundational layout (frontend) of the project, then used Figma to refine what I already had. After that, I used AI for a lot of the frontend code (a timesaver) so I could focus on learning and building the backend of the application.</p>
+                <p>Built with HTML, CSS, and JavaScript, with <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a> for the radar maps.</p>
+                <p>Built by Eric Johnson. See the code on <a href="https://github.com/Ericlamosca/CeruSky" target="_blank" rel="noopener noreferrer">GitHub</a>.</p>
+            </section>
+
+            <section class="Card AboutCard" aria-labelledby="credits-title">
+                <h2 id="credits-title">Credits</h2>
+                <dl class="CreditList">
+                    <dt>Current weather, 36-hour forecast, and place search</dt>
+                    <dd><a href="https://openweathermap.org/" target="_blank" rel="noopener noreferrer">OpenWeather</a></dd>
+
+                    <dt>7-day forecast and air quality</dt>
+                    <dd><a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>, used under the <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a> license</dd>
+
+                    <dt>Radar</dt>
+                    <dd><a href="https://www.nssl.noaa.gov/projects/mrms/" target="_blank" rel="noopener noreferrer">NOAA's National Weather Service, Multi-Radar Multi-Sensor (MRMS)</a>. CeruSky recolors it to show rain, snow, and hail, so the colors are CeruSky's, not NOAA's.</dd>
+
+                    <dt>Backup radar</dt>
+                    <dd>National Weather Service NEXRAD radar from the <a href="https://mesonet.agron.iastate.edu/" target="_blank" rel="noopener noreferrer">Iowa Environmental Mesonet</a>, Iowa State University, recolored by CeruSky to match the main radar. Its rain and snow are estimated using current temperatures from <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Open-Meteo</a>. Shown for the first moment while the main radar loads, and whenever the main radar can't load.</dd>
+
+                    <dt>Weather alerts</dt>
+                    <dd><a href="https://www.weather.gov/" target="_blank" rel="noopener noreferrer">National Weather Service</a></dd>
+
+                    <dt>Maps</dt>
+                    <dd>Map tiles from <a href="https://www.esri.com/" target="_blank" rel="noopener noreferrer">Esri</a>, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a> contributors, and the GIS user community. Shown with <a href="https://leafletjs.com/" target="_blank" rel="noopener noreferrer">Leaflet</a>.</dd>
+
+                    <dt>City photos</dt>
+                    <dd><a href="https://www.wikipedia.org/" target="_blank" rel="noopener noreferrer">Wikipedia</a> and Wikimedia Commons. Each photographer is credited on the photo when its license asks for it.</dd>
+
+                    <dt>News stories</dt>
+                    <dd><a href="https://news.google.com/" target="_blank" rel="noopener noreferrer">Google News</a>, converted with <a href="https://rss2json.com/" target="_blank" rel="noopener noreferrer">rss2json</a>. Every story links to the site that published it.</dd>
+
+                    <dt>Featured story photos and videos</dt>
+                    <dd><a href="https://www.foxweather.com/" target="_blank" rel="noopener noreferrer">FOX Weather</a>, from its news feed and its YouTube channel. Each one links to FOX Weather.</dd>
+
+                    <dt>State outlines</dt>
+                    <dd>US Census Bureau, through the <a href="https://github.com/topojson/us-atlas" target="_blank" rel="noopener noreferrer">us-atlas</a> package</dd>
+
+                    <dt>Icons and logo</dt>
+                    <dd>Based on <a href="https://lucide.dev/" target="_blank" rel="noopener noreferrer">Lucide</a> icons, under the ISC License, and changed to fit CeruSky's theme</dd>
+                </dl>
+            </section>
+
+        </main>
+
+        <footer class="SiteFooter">
+            CeruSky · <a href="https://github.com/Ericlamosca/CeruSky" target="_blank" rel="noopener noreferrer">View the code on GitHub</a>
+        </footer>
+    </div>
+
+    <script src="site.js"></script>
+</body>
+</html>
