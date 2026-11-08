@@ -1,3 +1,5 @@
+11/7/2026
+
 # CeruSky 
 
 A weather website that shows your local weather, a 36-hour forecast, live radar, and national weather news, all on one page.
@@ -53,3 +55,41 @@ The icons and logo are based on [Lucide icons](https://lucide.dev/icons/cloud-su
 - Videos: [FOX Weather](https://www.youtube.com/@FOXWeather) on YouTube
 - State outlines: US Census Bureau, through the [us-atlas](https://github.com/topojson/us-atlas) package
 - Icons: [Lucide](https://lucide.dev/), under the ISC License
+
+11/8/2026
+
+Summary
+Added alerts, air quality, new pages, and rain/snow/hail radar
+
+New pages
+- Radar: full-size radar with the last 2 hours and a time slider
+- 7-Day Forecast: daily highs, lows, conditions, rain chance, and wind (Open-Meteo)
+- About & Credits: project info and credits for every data source
+- Page buttons in the left panel on every page
+
+Homepage
+- Red weather alert banner with scrolling details from the National Weather Service
+- Air quality (US AQI) in the left weather card
+- Weather News features a real story photo or a matching YouTube video
+- Clickable cities in "Across the country"
+- °F/°C switch moved below the weather card
+- Removed the Outdoor plans section and the Sunrise/Sunset icon
+- Phone layout: search at the top, compact left panel
+
+Radar
+- Main radar: NOAA MRMS, recolored to show rain, snow, and hail
+- Backup radar: Iowa Environmental Mesonet, shown first while the main radar loads,
+  recolored to match, with snow estimated from current temperatures
+- Both the homepage card and the Radar page use the same radar code
+- Retries and automatic switching when NOAA or the NWS are briefly unavailable
+
+Fixes
+- City image no longer overflows its card
+- City photos now include Creative Commons images with credit
+- Picked recognizable photos for cities with generic ones (like New Orleans)
+- Full map credits for Esri and OpenStreetMap
+- Fixed a map error when the main radar couldn't load
+
+<img width="1916" height="956" alt="image" src="https://github.com/user-attachments/assets/68efc972-3d99-443c-abf7-eff11434b2bc" />
+
+
